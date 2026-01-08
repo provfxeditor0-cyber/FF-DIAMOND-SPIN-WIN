@@ -206,10 +206,10 @@
             margin-top: auto;
             margin-bottom: 20px;
             font-size: 9px;
-            color: #ff6b6b;
+            color: #888;
             letter-spacing: 1px;
             text-transform: uppercase;
-            opacity: 0.8;
+            opacity: 0.7;
         }
 
         /* --- REDEEM MODAL --- */
@@ -258,19 +258,7 @@
             max-width: 400px;
             margin: 20px auto;
             text-align: center;
-            min-height: 100px;
-        }
-        
-        /* Daily Reset Info */
-        .daily-info {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 10px;
-            color: #00d2ff;
-            border: 1px solid rgba(0,210,255,0.3);
+            min-height: 50px;
         }
     </style>
 </head>
@@ -293,11 +281,11 @@
         <div class="tile pos-0" id="tile-0"><i class="fas fa-coins"></i><span>10</span></div>
         <div class="tile pos-1" id="tile-1"><i class="fas fa-coins"></i><span>20</span></div>
         <div class="tile pos-2" id="tile-2"><i class="fas fa-gem"></i><span>5</span></div>
-        <div class="tile pos-3" id="tile-3"><i class="fas fa-coins"></i><span>50</span></div>
+        <div class="tile pos-3" id="tile-3"><i class="fas fa-coins"></i><span>30</span></div>
         
         <div class="tile pos-4" id="tile-4"><i class="fas fa-frown"></i><span>0</span></div>
         
-        <div class="tile pos-5" id="tile-5"><i class="fas fa-coins"></i><span>10</span></div>
+        <div class="tile pos-5" id="tile-5"><i class="fas fa-coins"></i><span>30</span></div>
         <div class="tile pos-6" id="tile-6"><i class="fas fa-coins"></i><span>10</span></div>
         <div class="tile pos-7" id="tile-7"><i class="fas fa-gem"></i><span>2</span></div>
         <div class="tile pos-8" id="tile-8"><i class="fas fa-coins"></i><span>30</span></div>
@@ -307,24 +295,12 @@
         <div class="spin-center">
             <button id="spin-btn" class="spin-btn" onclick="spinWheel()">
                 SPIN
-                <small><span id="daily-spins-left">7</span>/7 Daily | <span id="extra-spins-left">0</span> Extra</small>
+                <small><span id="spins-left">500</span>/500 Left</small>
             </button>
             <button id="ad-spin-btn" class="ad-spin-btn hidden" onclick="watchAdForSpin()">
                 <i class="fas fa-play-circle"></i>
                 <span>WATCH AD<br>GET 1 SPIN</span>
             </button>
-        </div>
-    </div>
-
-    <div class="daily-info" id="daily-reset-info">
-        Daily spins reset in: <span id="reset-timer">24:00:00</span>
-    </div>
-
-    <!-- Adsterra Video Ad Container -->
-    <div class="ad-container" id="adsterra-video-ad">
-        <!-- Adsterra Video Ad will load here -->
-        <div style="color:#888; font-size:12px; padding:20px;">
-            Video Ad Loading...
         </div>
     </div>
 
@@ -334,7 +310,7 @@
         </button>
     </div>
 
-    <div class="footer-text">REWARDS NOT GUARANTEED</div>
+    <div class="footer-text">FOR FUN</div>
 
     <div id="redeem-modal" class="modal-overlay hidden">
         <div class="modal-card">
@@ -372,16 +348,16 @@
     <script>
         // --- Game Config ---
         const rewards = [
-            { type: 'coin', val: 10 },  // 0
-            { type: 'coin', val: 20 },  // 1
-            { type: 'coin', val: 5 },   // 2
-            { type: 'coin', val: 50 },  // 3 (RARE - 2% chance)
-            { type: 'loss', val: 0 },   // 4
-            { type: 'coin', val: 10 },  // 5 (Changed from 100 to 10, 0% chance for 100)
-            { type: 'coin', val: 10 },  // 6
-            { type: 'coin', val: 2 },   // 7
-            { type: 'coin', val: 30 },  // 8
-            { type: 'loss', val: 0 }    // 9
+            { type: 'coin', val: 10 },   // 0
+            { type: 'coin', val: 20 },   // 1
+            { type: 'coin', val: 5 },    // 2
+            { type: 'coin', val: 30 },   // 3
+            { type: 'loss', val: 0 },    // 4
+            { type: 'coin', val: 30 },   // 5
+            { type: 'coin', val: 10 },   // 6
+            { type: 'coin', val: 2 },    // 7
+            { type: 'coin', val: 30 },   // 8
+            { type: 'loss', val: 0 }     // 9
         ];
 
         const PLANS = [
@@ -392,64 +368,35 @@
 
         // --- State ---
         let coins = parseInt(localStorage.getItem('ff_coins')) || 0;
-        let dailySpins = 7;
-        let extraSpins = parseInt(localStorage.getItem('ff_extra_spins')) || 0;
-        let lastResetDate = localStorage.getItem('ff_last_reset');
+        let spins = parseInt(localStorage.getItem('ff_spins')) || 500;
         let selectedPlanIndex = -1;
         let isSpinning = false;
-        
-        // Daily reset logic
-        function checkDailyReset() {
+        let spinCount = 0;
+        let adShownCount = 0;
+
+        // --- Initialize Game ---
+        function initializeGame() {
             const today = new Date().toDateString();
+            const lastReset = localStorage.getItem('ff_last_reset');
             
-            if (!lastResetDate || lastResetDate !== today) {
-                // New day - reset daily spins
-                dailySpins = 7;
-                lastResetDate = today;
+            if (lastReset !== today) {
+                spins = 500;
                 localStorage.setItem('ff_last_reset', today);
-                localStorage.setItem('ff_daily_spins', 7);
-            } else {
-                // Same day - load saved daily spins
-                dailySpins = parseInt(localStorage.getItem('ff_daily_spins')) || 7;
+                localStorage.setItem('ff_spins', spins);
+                spinCount = 0;
             }
-        }
-        
-        // Timer for daily reset
-        function updateResetTimer() {
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(0, 0, 0, 0);
             
-            const diff = tomorrow - now;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            document.getElementById('reset-timer').textContent = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            updateUI();
         }
-        
-        // --- Init ---
-        checkDailyReset();
-        updateUI();
-        setInterval(updateResetTimer, 1000);
-        updateResetTimer(); // Initial call
 
         // --- Core Functions ---
         function updateUI() {
             document.getElementById('user-coins').innerText = coins;
-            document.getElementById('daily-spins-left').innerText = dailySpins;
-            document.getElementById('extra-spins-left').innerText = extraSpins;
-            
+            document.getElementById('spins-left').innerText = spins;
             localStorage.setItem('ff_coins', coins);
-            localStorage.setItem('ff_daily_spins', dailySpins);
-            localStorage.setItem('ff_extra_spins', extraSpins);
+            localStorage.setItem('ff_spins', spins);
 
-            // Toggle Spin Buttons
-            const totalSpins = dailySpins + extraSpins;
-            
-            if(totalSpins <= 0) {
+            if(spins <= 0) {
                 document.getElementById('spin-btn').classList.add('hidden');
                 document.getElementById('ad-spin-btn').classList.remove('hidden');
             } else {
@@ -460,38 +407,15 @@
 
         function spinWheel() {
             if(isSpinning) return;
-            
-            const totalSpins = dailySpins + extraSpins;
-            if(totalSpins <= 0) {
-                alert("No spins left! Watch ad to get extra spins.");
-                return;
-            }
+            if(spins <= 0) return alert("No spins left! Watch ad to get more.");
 
             isSpinning = true;
-            
-            // Use daily spins first, then extra spins
-            if(dailySpins > 0) {
-                dailySpins--;
-            } else {
-                extraSpins--;
-            }
-            
+            spins--;
+            spinCount++;
             updateUI();
             
-            // WEIGHTED RANDOM LOGIC - 100 coins removed (0% chance)
-            const weights = [
-                15,  // 0: 10 coins (15%)
-                15,  // 1: 20 coins (15%)
-                15,  // 2: 5 coins (15%)
-                2,   // 3: 50 coins (2% only)
-                10,  // 4: Loss (10%)
-                15,  // 5: 10 coins (15%) - Changed from 100 to 10
-                15,  // 6: 10 coins (15%)
-                8,   // 7: 2 coins (8%)
-                5,   // 8: 30 coins (5%)
-                0    // 9: Loss (0%)
-            ];
-            
+            // Weighted probabilities
+            const weights = [15, 15, 15, 5, 12, 5, 15, 15, 5, 3];
             const totalWeight = weights.reduce((a, b) => a + b, 0);
             let random = Math.floor(Math.random() * totalWeight);
             
@@ -539,11 +463,12 @@
             setTimeout(() => {
                 if(reward.val > 0) {
                     coins += reward.val;
-                    // Special alert for 50 coins
-                    if(reward.val === 50) {
-                        alert(`🎉 JACKPOT! You won ${reward.val} Coins! 🎉`);
-                    } else {
-                        alert(`Congratulations! You won ${reward.val} Coins.`);
+                    alert(`Congratulations! You won ${reward.val} Coins.`);
+                    
+                    // 🔥 ADSTERRA POPUNDER TRIGGER - Every 3rd Spin
+                    adShownCount++;
+                    if(adShownCount % 3 === 0) {
+                        showAdsterraPopunder();
                     }
                 } else {
                     alert("Oops! Better luck next time.");
@@ -553,40 +478,57 @@
             }, 300);
         }
 
-        // --- Ad Logic with Adsterra Integration ---
+        // --- Adsterra Popunder Function ---
+        function showAdsterraPopunder() {
+            console.log("Showing Adsterra Popunder Ad");
+            // This will trigger the Adsterra popunder ad
+            // The script loaded from Adsterra will handle the popunder
+        }
+
+        // --- Ad Logic ---
         function watchAdForSpin() {
-            showAdsterraAd("spin");
+            showLoader("Watching Ad for Spin...", () => {
+                spins += 1;
+                alert("Ad Watched! You got 1 Free Spin.");
+                updateUI();
+                
+                // Also trigger Adsterra popunder
+                showAdsterraPopunder();
+            });
         }
 
         function watchAdForCoins() {
-            showAdsterraAd("coins");
+            showLoader("Watching Ad for Coins...", () => {
+                coins += 20;
+                alert("Ad Watched! You got 20 Coins.");
+                updateUI();
+                
+                // Also trigger Adsterra popunder
+                showAdsterraPopunder();
+            });
         }
 
-        function showAdsterraAd(type) {
+        function showLoader(text, callback) {
             const loader = document.getElementById('ad-loader');
-            loader.querySelector('.loader-text').innerText = "Loading Video Ad...";
+            loader.querySelector('.loader-text').innerText = text;
             loader.classList.remove('hidden');
             
-            // Simulate ad loading (3 seconds)
             setTimeout(() => {
                 loader.classList.add('hidden');
-                
-                // After ad completes, give reward
-                if(type === "spin") {
-                    extraSpins += 1;
-                    alert("Ad Watched! You got 1 Extra Spin.");
-                } else if(type === "coins") {
-                    coins += 20;
-                    alert("Ad Watched! You got 20 Coins.");
-                }
-                updateUI();
+                if(callback) callback();
             }, 3000);
         }
 
         // --- Redeem Logic ---
         function openRedeem() {
             document.getElementById('redeem-modal').classList.remove('hidden');
+            
+            // Trigger popunder when opening redeem modal
+            setTimeout(() => {
+                showAdsterraPopunder();
+            }, 1000);
         }
+        
         function closeRedeem() {
             document.getElementById('redeem-modal').classList.add('hidden');
             selectedPlanIndex = -1;
@@ -613,103 +555,52 @@
                     updateUI();
                     alert(`Success! ${plan.diam} Diamonds will be sent to UID: ${uid} within 24 hours.`);
                     closeRedeem();
+                    
+                    // Trigger popunder after successful redeem
+                    setTimeout(() => {
+                        showAdsterraPopunder();
+                    }, 500);
                 }
             } else {
                 alert(`Insufficient Coins! You need ${plan.cost} Coins.`);
             }
         }
-    </script>
-    
-    <!-- ============================================= -->
-    <!-- ADSTERRA VIDEO AD INTEGRATION -->
-    <!-- ============================================= -->
-    
-    <!-- 
-    ADSTERRA SE VIDEO AD KAISE LAGAYEN:
-    
-    1. Adsterra pe signup/login karein: https://www.adsterra.com
-    2. Dashboard se "Video Ads" section mein jayein
-    3. "Create New Video Ad Unit" par click karein
-    4. Settings configure karein:
-       - Ad Type: In-Page Video
-       - Dimensions: 400x300 ya 300x250
-       - Select placement: Choose "In-content"
-    
-    5. Generate hua code yahan paste karein:
-    
-    EXAMPLE CODE:
-    
-    <div id="container-xxxxx"></div>
-    <script type="text/javascript">
-        atOptions = {
-            'key' : 'YOUR_UNIQUE_KEY',
-            'format' : 'iframe',
-            'height' : 300,
-            'width' : 400,
-            'params' : {}
-        };
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = '//www.highperformanceformat.com/xxxxx/xxxxx/invoke.js';
-        document.getElementById('container-xxxxx').appendChild(script);
-    </script>
-    -->
-    
-    <!-- Yahan Adsterra ka video ad code paste karein -->
-    <!-- 
-    <div id="container-xxxxx"></div>
-    <script type="text/javascript">
-        atOptions = {
-            'key' : 'YOUR_UNIQUE_KEY',
-            'format' : 'iframe',
-            'height' : 300,
-            'width' : 400,
-            'params' : {}
-        };
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = '//www.highperformanceformat.com/xxxxx/xxxxx/invoke.js';
-        document.getElementById('container-xxxxx').appendChild(script);
-    </script>
-    -->
-    
-    <!-- ============================================= -->
-    <!-- ALTERNATIVE: Dynamic Ad Loading -->
-    <!-- ============================================= -->
-    <!-- 
-    <script type="text/javascript">
-        // Function to load Adsterra video ad
-        function loadAdsterraVideoAd() {
-            var adContainer = document.getElementById('adsterra-video-ad');
-            adContainer.innerHTML = '';
+
+        // --- Initialize Game ---
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeGame();
             
-            // Apna Adsterra video ad code yahan dalen
-            var adCode = `
-                <div id="container-xxxxx"></div>
-                <script type="text/javascript">
-                    atOptions = {
-                        'key' : 'YOUR_UNIQUE_KEY',
-                        'format' : 'iframe',
-                        'height' : 250,
-                        'width' : 300,
-                        'params' : {}
-                    };
-                    var script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.src = '//www.highperformanceformat.com/xxxxx/xxxxx/invoke.js';
-                    document.getElementById('container-xxxxx').appendChild(script);
-                <\/script>
-            `;
-            
-            adContainer.innerHTML = adCode;
-        }
-        
-        // Page load pe ad load karein
-        window.addEventListener('load', function() {
-            setTimeout(loadAdsterraVideoAd, 1000);
+            // Show popunder on first visit after 30 seconds
+            setTimeout(() => {
+                showAdsterraPopunder();
+            }, 30000);
         });
+
+        // Reset spins daily at midnight
+        function checkDailyReset() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            if(hours === 0 && minutes === 0) {
+                spins = 500;
+                spinCount = 0;
+                adShownCount = 0;
+                localStorage.setItem('ff_spins', spins);
+                localStorage.setItem('ff_last_reset', now.toDateString());
+                updateUI();
+            }
+        }
+
+        setInterval(checkDailyReset, 60000);
     </script>
-    -->
+
+    <!-- ============================================= -->
+    <!-- ADSTERRA POPUNDER AD SCRIPT -->
+    <!-- COPY THIS CODE AND PASTE IT HERE -->
+    <!-- ============================================= -->
+    <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
+    <!-- ============================================= -->
     
 </body>
 </html>
