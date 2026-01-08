@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FF Spin & Win</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0c29;
+            --tile-bg: rgba(255, 255, 255, 0.05);
+            --tile-border: 1px solid rgba(255, 255, 255, 0.1);
+            --primary: #7000ff;
+            --secondary: #00d2ff;
+            --gold: #ffd700;
+            --neon-glow: 0 0 10px var(--primary), 0 0 20px var(--secondary);
+            --active-glow: 0 0 15px #ffd700, 0 0 30px #ffaa00;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .coin-box {
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .redeem-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            border: 2px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 75, 43, 0.4);
+            transition: transform 0.2s;
+            animation: pulse 2s infinite;
+        }
+        .redeem-btn:active { transform: scale(0.9); }
+        .redeem-label { font-size: 10px; position: absolute; bottom: -20px; width: 60px; text-align: center; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 75, 43, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 43, 0); } }
+
+        /* --- GAME GRID --- */
+        .game-container {
+            margin-top: 30px;
+            padding: 15px;
+            width: 100%;
+            max-width: 450px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 80px);
+            gap: 10px;
+            position: relative;
+        }
+
+        .tile {
+            background: var(--tile-bg);
+            border: var(--tile-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .tile i { font-size: 20px; margin-bottom: 5px; color: var(--secondary); }
+        .tile span { color: white; }
+
+        /* Active Tile Animation */
+        .tile.active {
+            background: var(--gold);
+            box-shadow: var(--active-glow);
+            border-color: #fff;
+            transform: scale(1.1);
+            z-index: 2;
+        }
+        .tile.active i, .tile.active span { color: black; }
+
+        /* Grid Placement Logic */
+        .pos-0 { grid-column: 1; grid-row: 1; }
+        .pos-1 { grid-column: 2; grid-row: 1; }
+        .pos-2 { grid-column: 3; grid-row: 1; }
+        .pos-3 { grid-column: 4; grid-row: 1; }
+        .pos-4 { grid-column: 4; grid-row: 2; }
+        .pos-5 { grid-column: 4; grid-row: 3; }
+        .pos-6 { grid-column: 3; grid-row: 3; }
+        .pos-7 { grid-column: 2; grid-row: 3; }
+        .pos-8 { grid-column: 1; grid-row: 3; }
+        .pos-9 { grid-column: 1; grid-row: 2; }
+
+        /* Center Spin Area */
+        .spin-center {
+            grid-column: 2 / span 2;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 5px;
+        }
+
+        .spin-btn {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(112, 0, 255, 0.4);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .spin-btn small { font-size: 10px; font-weight: normal; margin-top: 5px; opacity: 0.8; }
+        .spin-btn:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(112, 0, 255, 0.4); }
+        .spin-btn:disabled { background: #333; cursor: not-allowed; box-shadow: none; color: #777; }
+
+        /* Watch Ad Button (Spin) */
+        .ad-spin-btn {
+            background: linear-gradient(135deg, #f0932b, #f39c12);
+            width: 100%; height: 100%;
+            border-radius: 12px; border: none; color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; font-weight: bold; font-size: 14px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-5px);} 60% {transform: translateY(-3px);} }
+
+        /* --- BOTTOM ACTIONS --- */
+        .bottom-actions {
+            margin-top: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .watch-coin-btn {
+            width: 100%;
+            padding: 15px;
+            background: #2e3131;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--secondary);
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .watch-coin-btn:hover { background: #3e4141; }
+
+        .footer-text {
+            margin-top: auto;
+            margin-bottom: 20px;
+            font-size: 9px;
+            color: #ff6b6b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* --- REDEEM MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-card {
+            background: #1a1a2e; width: 90%; max-width: 380px;
+            border-radius: 20px; padding: 25px; border: 1px solid var(--primary);
+            position: relative; text-align: center;
+        }
+        .close-modal { position: absolute; top: 15px; right: 15px; color: #777; font-size: 24px; cursor: pointer; }
+        
+        .redeem-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .redeem-item {
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid transparent; cursor: pointer;
+        }
+        .redeem-item.selected { border-color: var(--gold); background: rgba(255, 215, 0, 0.1); }
+
+        .input-uid {
+            width: 100%; padding: 12px; background: #000; border: 1px solid #333;
+            color: white; border-radius: 8px; margin-top: 20px; font-family: 'Poppins';
+        }
+        .submit-redeem {
+            width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none; color: white; font-weight: bold; border-radius: 8px; margin-top: 15px;
+            cursor: pointer;
+        }
+        .hidden { display: none !important; }
+
+        /* Loading Overlay for Ad Simulation */
+        .loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 200; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .loader-text { color: white; margin-top: 15px; font-size: 14px; }
+        
+        /* Ad Container */
+        .ad-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+            min-height: 100px;
+        }
+        
+        /* Daily Reset Info */
+        .daily-info {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+            color: #00d2ff;
+            border: 1px solid rgba(0,210,255,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="coin-box">
+            <i class="fas fa-coins"></i>
+            <span id="user-coins">0</span>
+        </div>
+        <div style="position:relative; display:flex; flex-direction:column; align-items:center;">
+            <div class="redeem-btn" onclick="openRedeem()">
+                <i class="fas fa-gift"></i>
+            </div>
+            <span class="redeem-label">REDEEM</span>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="tile pos-0" id="tile-0"><i class="fas fa-coins"></i><span>10</span></div>
+        <div class="tile pos-1" id="tile-1"><i class="fas fa-coins"></i><span>20</span></div>
+        <div class="tile pos-2" id="tile-2"><i class="fas fa-gem"></i><span>5</span></div>
+        <div class="tile pos-3" id="tile-3"><i class="fas fa-coins"></i><span>50</span></div>
+        
+        <div class="tile pos-4" id="tile-4"><i class="fas fa-frown"></i><span>0</span></div>
+        
+        <div class="tile pos-5" id="tile-5"><i class="fas fa-coins"></i><span>10</span></div>
+        <div class="tile pos-6" id="tile-6"><i class="fas fa-coins"></i><span>10</span></div>
+        <div class="tile pos-7" id="tile-7"><i class="fas fa-gem"></i><span>2</span></div>
+        <div class="tile pos-8" id="tile-8"><i class="fas fa-coins"></i><span>30</span></div>
+        
+        <div class="tile pos-9" id="tile-9"><i class="fas fa-bomb"></i><span>Loss</span></div>
+
+        <div class="spin-center">
+            <button id="spin-btn" class="spin-btn" onclick="spinWheel()">
+                SPIN
+                <small><span id="daily-spins-left">7</span>/7 Daily | <span id="extra-spins-left">0</span> Extra</small>
+            </button>
+            <button id="ad-spin-btn" class="ad-spin-btn hidden" onclick="watchAdForSpin()">
+                <i class="fas fa-play-circle"></i>
+                <span>WATCH AD<br>GET 1 SPIN</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="daily-info" id="daily-reset-info">
+        Daily spins reset in: <span id="reset-timer">24:00:00</span>
+    </div>
+
+    <!-- Adsterra Video Ad Container -->
+    <div class="ad-container" id="adsterra-video-ad">
+        <!-- Adsterra Video Ad will load here -->
+        <div style="color:#888; font-size:12px; padding:20px;">
+            Video Ad Loading...
+        </div>
+    </div>
+
+    <div class="bottom-actions">
+        <button class="watch-coin-btn" onclick="watchAdForCoins()">
+            <i class="fas fa-video"></i> Watch Ad to Get 20 Coins
+        </button>
+    </div>
+
+    <div class="footer-text">REWARDS NOT GUARANTEED</div>
+
+    <div id="redeem-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <span class="close-modal" onclick="closeRedeem()">&times;</span>
+            <h3 style="color:var(--secondary)">FF DIAMOND STORE</h3>
+            
+            <div class="redeem-list">
+                <div class="redeem-item" onclick="selectPlan(0, this)">
+                    <div><i class="fas fa-coins" style="color:var(--gold)"></i> 1000</div>
+                    <div>=</div>
+                    <div><i class="fas fa-gem" style="color:#00d2ff"></i> 500</div>
+                </div>
+                <div class="redeem-item" onclick="selectPlan(1, this)">
+                    <div><i class="fas fa-coins" style="color:var(--gold)"></i> 2000</div>
+                    <div>=</div>
+                    <div><i class="fas fa-gem" style="color:#00d2ff"></i> 1000</div>
+                </div>
+                <div class="redeem-item" onclick="selectPlan(2, this)">
+                    <div><i class="fas fa-coins" style="color:var(--gold)"></i> 5000</div>
+                    <div>=</div>
+                    <div><i class="fas fa-gem" style="color:#00d2ff"></i> 2800</div>
+                </div>
+            </div>
+
+            <input type="number" id="ff-uid" class="input-uid" placeholder="Enter FF UID">
+            <button class="submit-redeem" onclick="processRedeem()">REDEEM NOW</button>
+        </div>
+    </div>
+
+    <div id="ad-loader" class="loader-overlay hidden">
+        <i class="fas fa-spinner fa-spin" style="font-size:40px; color:var(--secondary)"></i>
+        <div class="loader-text">Loading Advertisement...</div>
+    </div>
+
+    <script>
+        // --- Game Config ---
+        const rewards = [
+            { type: 'coin', val: 10 },  // 0
+            { type: 'coin', val: 20 },  // 1
+            { type: 'coin', val: 5 },   // 2
+            { type: 'coin', val: 50 },  // 3 (RARE - 2% chance)
+            { type: 'loss', val: 0 },   // 4
+            { type: 'coin', val: 10 },  // 5 (Changed from 100 to 10, 0% chance for 100)
+            { type: 'coin', val: 10 },  // 6
+            { type: 'coin', val: 2 },   // 7
+            { type: 'coin', val: 30 },  // 8
+            { type: 'loss', val: 0 }    // 9
+        ];
+
+        const PLANS = [
+            { cost: 1000, diam: 500 },
+            { cost: 2000, diam: 1000 },
+            { cost: 5000, diam: 2800 }
+        ];
+
+        // --- State ---
+        let coins = parseInt(localStorage.getItem('ff_coins')) || 0;
+        let dailySpins = 7;
+        let extraSpins = parseInt(localStorage.getItem('ff_extra_spins')) || 0;
+        let lastResetDate = localStorage.getItem('ff_last_reset');
+        let selectedPlanIndex = -1;
+        let isSpinning = false;
+        
+        // Daily reset logic
+        function checkDailyReset() {
+            const today = new Date().toDateString();
+            
+            if (!lastResetDate || lastResetDate !== today) {
+                // New day - reset daily spins
+                dailySpins = 7;
+                lastResetDate = today;
+                localStorage.setItem('ff_last_reset', today);
+                localStorage.setItem('ff_daily_spins', 7);
+            } else {
+                // Same day - load saved daily spins
+                dailySpins = parseInt(localStorage.getItem('ff_daily_spins')) || 7;
+            }
+        }
+        
+        // Timer for daily reset
+        function updateResetTimer() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            
+            const diff = tomorrow - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('reset-timer').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // --- Init ---
+        checkDailyReset();
+        updateUI();
+        setInterval(updateResetTimer, 1000);
+        updateResetTimer(); // Initial call
+
+        // --- Core Functions ---
+        function updateUI() {
+            document.getElementById('user-coins').innerText = coins;
+            document.getElementById('daily-spins-left').innerText = dailySpins;
+            document.getElementById('extra-spins-left').innerText = extraSpins;
+            
+            localStorage.setItem('ff_coins', coins);
+            localStorage.setItem('ff_daily_spins', dailySpins);
+            localStorage.setItem('ff_extra_spins', extraSpins);
+
+            // Toggle Spin Buttons
+            const totalSpins = dailySpins + extraSpins;
+            
+            if(totalSpins <= 0) {
+                document.getElementById('spin-btn').classList.add('hidden');
+                document.getElementById('ad-spin-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('spin-btn').classList.remove('hidden');
+                document.getElementById('ad-spin-btn').classList.add('hidden');
+            }
+        }
+
+        function spinWheel() {
+            if(isSpinning) return;
+            
+            const totalSpins = dailySpins + extraSpins;
+            if(totalSpins <= 0) {
+                alert("No spins left! Watch ad to get extra spins.");
+                return;
+            }
+
+            isSpinning = true;
+            
+            // Use daily spins first, then extra spins
+            if(dailySpins > 0) {
+                dailySpins--;
+            } else {
+                extraSpins--;
+            }
+            
+            updateUI();
+            
+            // WEIGHTED RANDOM LOGIC - 100 coins removed (0% chance)
+            const weights = [
+                15,  // 0: 10 coins (15%)
+                15,  // 1: 20 coins (15%)
+                15,  // 2: 5 coins (15%)
+                2,   // 3: 50 coins (2% only)
+                10,  // 4: Loss (10%)
+                15,  // 5: 10 coins (15%) - Changed from 100 to 10
+                15,  // 6: 10 coins (15%)
+                8,   // 7: 2 coins (8%)
+                5,   // 8: 30 coins (5%)
+                0    // 9: Loss (0%)
+            ];
+            
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.floor(Math.random() * totalWeight);
+            
+            let weightSum = 0;
+            let targetIndex = 0;
+            for (let i = 0; i < weights.length; i++) {
+                weightSum += weights[i];
+                if (random < weightSum) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+            
+            // Spin Animation
+            let rounds = 3;
+            let currentStep = 0;
+            let totalSteps = (rounds * 10) + targetIndex;
+            let speed = 50;
+
+            function step() {
+                document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+                
+                let actualPos = currentStep % 10;
+                document.getElementById(`tile-${actualPos}`).classList.add('active');
+
+                currentStep++;
+
+                if(currentStep <= totalSteps) {
+                    if(totalSteps - currentStep < 10) speed += 30;
+                    else if(totalSteps - currentStep < 5) speed += 60;
+                    
+                    setTimeout(step, speed);
+                } else {
+                    finishSpin(targetIndex);
+                }
+            }
+
+            step();
+        }
+
+        function finishSpin(index) {
+            isSpinning = false;
+            const reward = rewards[index];
+            
+            setTimeout(() => {
+                if(reward.val > 0) {
+                    coins += reward.val;
+                    // Special alert for 50 coins
+                    if(reward.val === 50) {
+                        alert(`🎉 JACKPOT! You won ${reward.val} Coins! 🎉`);
+                    } else {
+                        alert(`Congratulations! You won ${reward.val} Coins.`);
+                    }
+                } else {
+                    alert("Oops! Better luck next time.");
+                }
+                updateUI();
+                document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+            }, 300);
+        }
+
+        // --- Ad Logic with Adsterra Integration ---
+        function watchAdForSpin() {
+            showAdsterraAd("spin");
+        }
+
+        function watchAdForCoins() {
+            showAdsterraAd("coins");
+        }
+
+        function showAdsterraAd(type) {
+            const loader = document.getElementById('ad-loader');
+            loader.querySelector('.loader-text').innerText = "Loading Video Ad...";
+            loader.classList.remove('hidden');
+            
+            // Simulate ad loading (3 seconds)
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                
+                // After ad completes, give reward
+                if(type === "spin") {
+                    extraSpins += 1;
+                    alert("Ad Watched! You got 1 Extra Spin.");
+                } else if(type === "coins") {
+                    coins += 20;
+                    alert("Ad Watched! You got 20 Coins.");
+                }
+                updateUI();
+            }, 3000);
+        }
+
+        // --- Redeem Logic ---
+        function openRedeem() {
+            document.getElementById('redeem-modal').classList.remove('hidden');
+        }
+        function closeRedeem() {
+            document.getElementById('redeem-modal').classList.add('hidden');
+            selectedPlanIndex = -1;
+            document.querySelectorAll('.redeem-item').forEach(i => i.classList.remove('selected'));
+        }
+
+        function selectPlan(index, el) {
+            selectedPlanIndex = index;
+            document.querySelectorAll('.redeem-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function processRedeem() {
+            const uid = document.getElementById('ff-uid').value;
+            
+            if(selectedPlanIndex === -1) return alert("Please select a Diamond Pack.");
+            if(!uid || uid.length < 5) return alert("Please enter a valid FF UID.");
+
+            const plan = PLANS[selectedPlanIndex];
+
+            if(coins >= plan.cost) {
+                if(confirm(`Redeem ${plan.diam} Diamonds for ${plan.cost} Coins?`)) {
+                    coins -= plan.cost;
+                    updateUI();
+                    alert(`Success! ${plan.diam} Diamonds will be sent to UID: ${uid} within 24 hours.`);
+                    closeRedeem();
+                }
+            } else {
+                alert(`Insufficient Coins! You need ${plan.cost} Coins.`);
+            }
+        }
+    </script>
+    
+    <!-- ============================================= -->
+    <!-- ADSTERRA VIDEO AD INTEGRATION -->
+    <!-- ============================================= -->
+    
+    <!-- 
+    ADSTERRA SE VIDEO AD KAISE LAGAYEN:
+    
+    1. Adsterra pe signup/login karein: https://www.adsterra.com
+    2. Dashboard se "Video Ads" section mein jayein
+    3. "Create New Video Ad Unit" par click karein
+    4. Settings configure karein:
+       - Ad Type: In-Page Video
+       - Dimensions: 400x300 ya 300x250
+       - Select placement: Choose "In-content"
+    
+    5. Generate hua code yahan paste karein:
+    
+    EXAMPLE CODE:
+    
+    <div id="container-xxxxx"></div>
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'YOUR_UNIQUE_KEY',
+            'format' : 'iframe',
+            'height' : 300,
+            'width' : 400,
+            'params' : {}
+        };
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = '//www.highperformanceformat.com/xxxxx/xxxxx/invoke.js';
+        document.getElementById('container-xxxxx').appendChild(script);
+    </script>
+    -->
+    
+    <!-- Yahan Adsterra ka video ad code paste karein -->
+    <!-- 
+    <div id="container-xxxxx"></div>
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'YOUR_UNIQUE_KEY',
+            'format' : 'iframe',
+            'height' : 300,
+            'width' : 400,
+            'params' : {}
+        };
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = '//www.highperformanceformat.com/xxxxx/xxxxx/invoke.js';
+        document.getElementById('container-xxxxx').appendChild(script);
+    </script>
+    -->
+    
+    <!-- ============================================= -->
+    <!-- ALTERNATIVE: Dynamic Ad Loading -->
+    <!-- ============================================= -->
+    <!-- 
+    <script type="text/javascript">
+        // Function to load Adsterra video ad
+        function loadAdsterraVideoAd() {
+            var adContainer = document.getElementById('adsterra-video-ad');
+            adContainer.innerHTML = '';
+            
+            // Apna Adsterra video ad code yahan dalen
+            var adCode = `
+                <div id="container-xxxxx"></div>
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : 'YOUR_UNIQUE_KEY',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = '//www.highperformanceformat.com/xxxxx/xxxxx/invoke.js';
+                    document.getElementById('container-xxxxx').appendChild(script);
+                <\/script>
+            `;
+            
+            adContainer.innerHTML = adCode;
+        }
+        
+        // Page load pe ad load karein
+        window.addEventListener('load', function() {
+            setTimeout(loadAdsterraVideoAd, 1000);
+        });
+    </script>
+    -->
+    
+</body>
+</html>
