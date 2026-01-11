@@ -904,16 +904,6 @@
             border: 4px solid rgba(255,255,255,0.1);
         }
         
-        .inr-value {
-            font-size: 16px;
-            color: var(--text-muted);
-            background: rgba(46, 204, 113, 0.1);
-            padding: 6px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 8px;
-        }
-        
         .menu-item {
             padding: 16px 20px; 
             border-bottom: 1px solid rgba(255,255,255,0.05); 
@@ -1259,22 +1249,21 @@
         }
         
         /* ==================== CUSTOM STYLES ==================== */
-        .first-read-btn {
-            background: linear-gradient(135deg, #ff9800, #ff5722);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
+        .first-read-link {
+            color: var(--secondary);
+            font-size: 14px;
+            text-align: center;
             margin-bottom: 20px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+            gap: 8px;
+            text-decoration: underline;
+        }
+        
+        .first-read-link:hover {
+            color: var(--primary);
         }
         
         .instructions-content {
@@ -1300,19 +1289,16 @@
             color: var(--secondary);
         }
         
-        .instructions-note {
-            background: rgba(243, 156, 18, 0.1);
-            border: 2px solid rgba(243, 156, 18, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .instructions-note p {
+        .important-note {
             color: #FFD700;
             font-weight: 600;
-            margin: 0;
+            margin: 20px 0;
+            padding: 15px;
+            text-align: center;
+            font-size: 16px;
+            border-left: 3px solid #FFD700;
+            border-right: 3px solid #FFD700;
+            background: rgba(255, 215, 0, 0.05);
         }
         
         /* ==================== RESPONSIVE DESIGN ==================== */
@@ -1382,6 +1368,10 @@
             .instructions-content {
                 max-height: 300px;
             }
+            
+            .first-read-link {
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -1405,8 +1395,9 @@
                     <p><strong>Tic Tac Toe AI Battle</strong><br>
                     The second option of captcha is a fast-paced Tic Tac Toe game, where you play against a smart AI. The game is limited to 3 moves - you have to either win or draw. Every win gives you 25 Coins!</p>
                     
-                    <div class="instructions-note">
-                        <p><i class="fas fa-exclamation-triangle"></i> <strong>NOTE:</strong> We have made the app just for fun we are not giving real money</p>
+                    <div class="important-note">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        NOTE: We have made the app just for fun we are not giving real money. This app is for entertainment purposes only and you cannot earn real money from it.
                     </div>
                     
                     <p><strong>New Challenges Every Day</strong><br>
@@ -1418,9 +1409,9 @@
         <div id="register-form" class="auth-card">
             <h2>CREATE ACCOUNT</h2>
             
-            <button class="first-read-btn" onclick="showInstructionsPopup()">
+            <div class="first-read-link" onclick="showInstructionsPopup()">
                 <i class="fas fa-info-circle"></i> FIRST READ THIS
-            </button>
+            </div>
             
             <div class="input-group">
                 <div class="input-icon"><i class="fas fa-phone"></i></div>
@@ -1478,7 +1469,7 @@
                 <p style="margin-top:10px; color:var(--text-muted)">WE HAVE A GIFT FOR YOU</p>
                 <div class="coin-anim">💰</div>
                 <h2 style="margin:0">50 COINS</h2>
-                <button onclick="claimWelcomeGift()">RECEIVE GIFT</button>
+                <button onclick="showAdAndThen(claimWelcomeGift)">RECEIVE GIFT</button>
             </div>
         </div>
 
@@ -1529,7 +1520,7 @@
                     </div>
                     
                     <div class="back-header">
-                        <div class="back-btn-game" onclick="backToHomeWithoutAd()">←</div>
+                        <div class="back-btn-game" onclick="showAdAndThen(backToHome)">←</div>
                         <div class="game-title">Tic Tac Toe</div>
                     </div>
                     
@@ -1594,7 +1585,7 @@
                     </div>
                     
                     <div class="back-header" style="padding: 20px;">
-                        <div class="back-btn-game" onclick="backToHomeWithoutAd()">←</div>
+                        <div class="back-btn-game" onclick="showAdAndThen(backToHome)">←</div>
                         <div class="game-title">Type the Correct Data</div>
                     </div>
                     
@@ -1724,8 +1715,6 @@
                 <div class="container">
                     <h2>Withdraw Funds</h2>
                     <div style="background: var(--surface); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: var(--glass-border);">
-                        <p style="color: var(--text-muted); margin-bottom: 5px;">Exchange Rate</p>
-                        <p style="font-weight: bold; color: var(--secondary);">1000 Coins = ₹500 INR</p>
                         <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1)">
                              Current Balance: <span id="redeem-balance" class="text-green" style="font-weight:bold">0</span>
                         </div>
@@ -1735,7 +1724,6 @@
                     </div>
                     
                     <div class="input-group"><div class="input-icon"><i class="fas fa-user"></i></div><input type="text" id="redeem-name" placeholder="Account Name"></div>
-                    <div class="input-group"><div class="input-icon"><i class="fas fa-id-card"></i></div><input type="text" id="redeem-upi" placeholder="10-Digit UPI ID" maxlength="10" pattern="[0-9]*" inputmode="numeric"></div>
                     <div class="input-group"><div class="input-icon"><i class="fas fa-coins"></i></div><input type="number" id="redeem-amount" placeholder="Coins to Withdraw (Min 5000)" pattern="[0-9]*" inputmode="numeric"></div>
                     <button onclick="showAdAndThen(processRedeem)">REDEEM NOW</button>
                 </div>
@@ -1748,8 +1736,7 @@
                     <h3 id="acc-username" style="font-size: 22px;">Username</h3>
                     <p style="color: var(--secondary); font-size: 15px;" id="acc-phone">+91 9999999999</p>
                     <p style="font-size: 13px; color: var(--text-muted); margin-top:2px; letter-spacing: 1px;">UID: <span id="acc-uid">000000</span></p>
-                    <h2 style="color: var(--success); margin-top: 15px; font-size: 28px;" id="acc-coins">0.00</h2>
-                    <div class="inr-value" id="acc-inr">≈ ₹0.00</div>
+                    <h2 style="color: var(--success); margin-top: 15px; font-size: 28px;" id="acc-coins">0</h2>
                 </div>
                 <div class="menu-list" style="background: var(--bg-dark);">
                     <div class="menu-item" onclick="showAdAndThen(() => openSubPage('sub-redeem-hist'))">
@@ -1884,7 +1871,7 @@
         const CAPTCHA_LOCK_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
         
         // ==================== LOCAL STORAGE KEYS ====================
-        const DB_KEY = "codeville_users_v9";
+        const DB_KEY = "codeville_users_v10";
         const PRODUCTS_KEY = "codeville_products";
         const CODES_KEY = "codeville_codes";
         const REMEMBER_ME_KEY = "codeville_remember_me";
@@ -2361,10 +2348,6 @@
             document.getElementById('acc-phone').textContent = "+91 " + currentUser.phone;
             document.getElementById('acc-uid').textContent = currentUser.uid;
             
-            // Calculate INR value (1000 coins = ₹500)
-            const inrValue = (currentUser.coins / 1000) * 500;
-            document.getElementById('acc-inr').textContent = `≈ ₹${inrValue.toFixed(2)}`;
-            
             // Update game coin displays
             document.getElementById('tictactoe-coins-display').textContent = currentUser.coins;
             document.getElementById('captcha-coins-display').textContent = currentUser.coins;
@@ -2761,17 +2744,11 @@
         // ==================== REDEEM FUNCTIONS ====================
         function processRedeem() {
             const name = document.getElementById('redeem-name').value.trim();
-            const upi = document.getElementById('redeem-upi').value.trim();
             const amountVal = document.getElementById('redeem-amount').value.trim();
             const amount = parseInt(amountVal);
             
-            if (!name || !upi || !amountVal) {
+            if (!name || !amountVal) {
                 alert("Please fill all details.");
-                return;
-            }
-            
-            if (upi.length !== 10) {
-                alert("UPI ID must be exactly 10 digits.");
                 return;
             }
             
@@ -2786,14 +2763,11 @@
             }
             
             currentUser.coins -= amount;
-            const inrValue = (amount / 1000) * 500;
             const transId = "TXN" + Date.now().toString().substring(5);
             
             // Add to redeem history with SUCCESS status
             currentUser.history.redeem.unshift({
                 amount: amount,
-                inr: inrValue.toFixed(2),
-                upi: upi,
                 tid: transId,
                 date: new Date().toLocaleString(),
                 status: "Success"
@@ -2804,11 +2778,10 @@
             saveUsers();
             
             // Show success message
-            alert(`✅ Redeem request for ₹${inrValue.toFixed(2)} successful!\n\nTransaction ID: ${transId}`);
+            alert(`✅ Redeem request for ${amount} Coins successful!\n\nTransaction ID: ${transId}`);
             
             document.getElementById('redeem-amount').value = "";
             document.getElementById('redeem-name').value = "";
-            document.getElementById('redeem-upi').value = "";
             updateUI();
         }
         
@@ -2837,8 +2810,8 @@
                     
                     html += `
                         <div class="history-item">
-                            <div><b>To: ${d.upi}</b><br><small>TID: ${d.tid}</small><br><small>${d.date}</small><br><small class="${statusClass}">${statusText}</small></div>
-                            <div style="text-align:right"><span class="text-red" style="font-weight:bold">-${d.amount} C</span><br><span class="text-green">₹${d.inr}</span></div>
+                            <div><b>Transaction ID: ${d.tid}</b><br><small>${d.date}</small><br><small class="${statusClass}">${statusText}</small></div>
+                            <div style="text-align:right"><span class="text-red" style="font-weight:bold">-${d.amount} C</span></div>
                         </div>`;
                 });
             } else if (pageId === 'sub-trans-hist') {
@@ -2849,7 +2822,7 @@
                     html += `
                         <div class="history-item">
                             <div><b>${d.desc}</b><br><small>${d.date}</small></div>
-                            <div class="${color}" style="font-weight:bold; font-size:18px;">${d.amount}</div>
+                            <div class="${color}" style="font-weight:bold; font-size:18px;">${d.amount} C</div>
                         </div>`;
                 });
             } else if (pageId === 'sub-bet-hist') {
@@ -2860,7 +2833,7 @@
                     html += `
                         <div class="history-item">
                             <div><b>${d.game}</b><br><small>${d.description}</small><br><small>${d.date}</small></div>
-                            <div class="${color}" style="font-weight:bold; font-size:18px;">${d.amount}</div>
+                            <div class="${color}" style="font-weight:bold; font-size:18px;">${d.amount} C</div>
                         </div>`;
                 });
             } else if (pageId === 'sub-buy-hist') {
@@ -2873,7 +2846,7 @@
                         html += `
                             <div class="history-item">
                                 <div><b>${d.item}</b><br><small>${d.date}</small></div>
-                                <div style="font-weight:bold; color:var(--secondary)">₹${d.price}</div>
+                                <div style="font-weight:bold; color:var(--secondary)">${d.price} C</div>
                             </div>`;
                     });
                 }
@@ -2884,7 +2857,7 @@
                     html += `
                         <div class="history-item">
                             <div><b style="letter-spacing:1px">${d.code}</b><br><small>${d.date}</small></div>
-                            <div class="text-green" style="font-weight:bold; font-size:18px;">+${d.amount}</div>
+                            <div class="text-green" style="font-weight:bold; font-size:18px;">+${d.amount} C</div>
                         </div>`;
                 });
             }
@@ -3016,16 +2989,6 @@
             document.querySelectorAll('form').forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                });
-            });
-            
-            // Remove ad triggers from auth input fields
-            document.querySelectorAll('#auth-screen input').forEach(input => {
-                input.addEventListener('click', function(e) {
-                    // No ad on input click
-                });
-                input.addEventListener('focus', function(e) {
-                    // No ad on input focus
                 });
             });
         });
