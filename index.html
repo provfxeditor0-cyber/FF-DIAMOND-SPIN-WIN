@@ -3,332 +3,583 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Server App</title>
+    <title>Earn & Code Pro</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* --- CSS STYLES (IMPROVED UI) --- */
         :root {
-            --primary: #00f2fe;
-            --secondary: #4facfe;
-            --accent: #ffd700;
-            --dark-bg: #09203f;
-            --dark-bg-2: #537895;
-            --glass-bg: rgba(255, 255, 255, 0.12);
-            --glass-border: rgba(255, 255, 255, 0.25);
-            --text-color: #ffffff;
+            --primary: #8b5cf6; /* Violet */
+            --secondary: #ec4899; /* Pink */
+            --bg-dark: #0f172a;
+            --card-glass: rgba(30, 41, 59, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --insta-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Montserrat', 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-bg-2) 100%);
+            background-color: var(--bg-dark);
+            /* Deep modern background gradient */
+            background-image: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 20%);
+            color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-color);
-            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
-        /* Main Container Styling - Increased Height & Better Glass Effect */
-        .container {
-            width: 100%;
-            max-width: 420px;
-            min-height: 550px; /* Height Increased as requested */
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 24px;
-            padding: 40px 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--glass-border);
-            text-align: center;
-            display: flex;
+        /* --- Page Transitions --- */
+        .page {
+            display: none;
+            padding: 24px;
+            min-height: 100vh;
             flex-direction: column;
-            justify-content: space-between; /* Spacing for Ad at bottom */
-            animation: fadeIn 0.5s ease-in-out;
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes fadeIn {
+        .page.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h2 {
-            margin: 0 0 25px 0;
+        /* --- Headers --- */
+        h1 {
+            font-size: 28px;
             font-weight: 700;
-            letter-spacing: 1.5px;
-            font-size: 24px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 10px;
+            background: linear-gradient(to right, #fff, #cbd5e1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
         }
 
-        p {
-            color: #e0e0e0;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 30px;
-        }
-
-        /* Feature Box */
-        .feature-box {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .feature-text {
-            margin: 0;
-            font-size: 1.2em;
+        h2 {
+            font-size: 22px;
             font-weight: 600;
-            color: var(--accent);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
 
-        /* Buttons */
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 1px;
+        /* --- Menu Grid (Home) --- */
+        .menu-grid {
+            display: grid;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .menu-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            gap: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-primary {
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
-            color: white;
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
-        }
-        .btn-primary:hover {
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+        .menu-card:hover {
             transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            margin-top: 15px;
-            padding: 12px;
-            font-size: 16px;
+        .menu-card:active {
+            transform: scale(0.98);
         }
-        .btn-outline:hover {
-           background: rgba(0, 242, 254, 0.1);
-        }
-        .btn:active { transform: scale(0.97); }
 
-        /* Inputs */
-        input[type="text"] {
-            width: 100%;
-            padding: 18px;
+        .icon-box {
+            width: 50px;
+            height: 50px;
             border-radius: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+        }
+
+        /* Specific colors for icons */
+        .card-ad .icon-box { color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); }
+        .card-git .icon-box { color: #f8fafc; box-shadow: 0 0 15px rgba(248, 250, 252, 0.2); }
+        .card-code .icon-box { color: #60a5fa; box-shadow: 0 0 15px rgba(96, 165, 250, 0.2); }
+        
+        /* New Gold Card Style */
+        .card-gold .icon-box { color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
+        .card-gold { border-color: rgba(251, 191, 36, 0.3); }
+
+        .card-text {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            flex: 1; /* Allows text to take available space */
+        }
+
+        .chevron {
+            opacity: 0.5;
+            font-size: 14px;
+        }
+
+        /* --- Back Button --- */
+        .nav-header {
+            display: flex;
+            align-items: center;
             margin-bottom: 25px;
-            outline: none;
-            font-size: 18px;
-            text-align: center;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
         }
-        input:focus { border-color: var(--primary); }
-        ::placeholder { color: rgba(255,255,255,0.5); }
 
-        /* Loading Animation (Improved) */
-        .loader-container {
-            flex-grow: 1;
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            transition: 0.2s;
         }
-        .spinner {
-            width: 70px;
-            height: 70px;
-            border: 6px solid rgba(255, 255, 255, 0.1);
-            border-top: 6px solid var(--primary);
-            border-right: 6px solid var(--secondary);
+
+        .back-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* --- Content Styling --- */
+        .content-box {
+            background: var(--card-glass);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+            margin-bottom: 24px;
+        }
+
+        .text-highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- Timeline Steps --- */
+        .step-list {
+            list-style: none;
+            padding-left: 10px;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 45px;
+            margin-bottom: 25px;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .step-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* The Line */
+        .step-list li::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 24px;
+            bottom: -28px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .step-list li:last-child::before {
+            display: none;
+        }
+
+        /* The Number Bubble */
+        .step-list li::after {
+            counter-increment: my-counter; 
+        }
+        
+        /* Custom number rendering */
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
             border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-            margin-bottom: 30px;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Ad Container Styling */
-        .ad-wrapper {
-            margin-top: auto; /* Pushes to bottom */
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            min-height: 60px; /* Reserve space for ad */
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4);
+            z-index: 2;
         }
 
-        /* Utility */
-        .hidden { display: none !important; }
-        .content-grow { flex-grow: 1; }
+        .step-list strong {
+            color: white;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* --- Links & Banners --- */
+        .ad-banner {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        
+        .ad-banner img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .ad-banner img:hover {
+            transform: scale(1.02);
+        }
+
+        /* --- Glowing Instagram Button --- */
+        .insta-wrapper {
+            margin-top: auto;
+            padding-top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .insta-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .insta-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 14px;
+            border-radius: 50px;
+            background: var(--insta-grad);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            animation: pulse-glow 3s infinite;
+        }
+
+        .insta-btn i {
+            font-size: 24px;
+        }
+
+        /* Shine effect */
+        .insta-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .insta-btn:hover::before {
+            left: 100%;
+        }
+
+        .insta-btn:active {
+            transform: scale(0.96);
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(220, 39, 67, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(220, 39, 67, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 39, 67, 0); }
+        }
+
+        /* --- Ad Script Container --- */
+        .hidden-ad {
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
 
-    <div id="page-home" class="container">
-        <div class="content-grow">
-            <h2>Welcome User</h2>
-            
-            <div class="feature-box">
-                <p class="feature-text">Play and earn upto 5000 daily</p>
-                <a href="#" onclick="handleExternalLink(); return false;" class="btn btn-outline">Click here to open</a>
+    <div id="home-page" class="page active">
+        <h1><i class="fa-solid fa-shapes"></i> Dashboard</h1>
+        
+        <p style="text-align: center; margin-bottom: 30px; font-size: 14px;">Select an option to start earning</p>
+
+        <div class="menu-grid">
+            <div class="menu-card card-ad" onclick="openPage('page-ad')">
+                <div class="icon-box">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+                <div class="card-text">How to Make Ad Account</div>
+                <i class="fa-solid fa-chevron-right chevron"></i>
             </div>
 
-            <p style="margin-top: 40px; font-size: 14px; opacity: 0.8;">Secure your connection today.</p>
+            <div class="menu-card card-git" onclick="openPage('page-github')">
+                <div class="icon-box">
+                    <i class="fa-brands fa-github"></i>
+                </div>
+                <div class="card-text">How to Make GitHub</div>
+                <i class="fa-solid fa-chevron-right chevron"></i>
+            </div>
 
-            <button onclick="goToNamePage()" class="btn btn-primary">DOWNLOAD PROXY SERVER</button>
+            <div class="menu-card card-code" onclick="openPage('page-code')">
+                <div class="icon-box">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <div class="card-text">Get Apps Code</div>
+                <i class="fa-solid fa-chevron-right chevron"></i>
+            </div>
+            
+            <div class="menu-card card-gold" onclick="window.open('https://provfxeditor0-cyber.github.io/Tap-Wap-Point/', '_blank')">
+                <div class="icon-box">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div class="card-text">Earn Upto 5000 Daily click here</div>
+                <i class="fa-solid fa-up-right-from-square chevron"></i>
+            </div>
+
+        </div>
+
+        <div class="hidden-ad">
+            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
+        </div>
+    </div>
+
+
+    <div id="page-ad" class="page">
+        <div class="nav-header">
+            <button class="back-btn" onclick="openPage('home-page')">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h2 style="margin:0 0 0 15px; font-size: 18px;">Create Adsterra Account</h2>
+        </div>
+
+        <div class="content-box">
+            <div class="ad-banner">
+                <a href="https://beta.publishers.adsterra.com/referral/n3CbkGGGdd" rel="nofollow">
+                    <img alt="banner" src="https://landings-cdn.adsterratech.com/referralBanners/png/80%20x%2030%20px.png" />
+                </a>
+                <div style="margin-top: 10px;">
+                    <a href="https://beta.publishers.adsterra.com/referral/n3CbkGGGdd" style="color:#4ade80; text-decoration: none; font-weight: 600;">
+                        <i class="fa-solid fa-link"></i> Click here to Sign Up
+                    </a>
+                </div>
+            </div>
+
+            <ul class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <strong>Register</strong>
+                    Make a new publisher account with your email.
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <strong>New Website</strong>
+                    After making the publisher account, click on the "New Website" option in the sidebar.
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <strong>Add GitHub</strong>
+                    Paste your GitHub link that you have made.
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <strong>Select Ads</strong>
+                    Choose <strong>Popunder</strong> ads (This is best for you).
+                </li>
+                <li>
+                    <span class="step-number">5</span>
+                    <strong>Get Code</strong>
+                    Click "Add". You will get a code in your mail/dashboard in 2-3 minutes.
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <strong>Implement</strong>
+                    After getting the code, paste it into your app code.
+                </li>
+                <li>
+                    <span class="step-number">7</span>
+                    <strong>Publish & Earn</strong>
+                    Publish the app, share with your friends and start earning money!
+                </li>
+            </ul>
+        </div>
+
+        <div class="insta-wrapper">
+            <span class="insta-label">Having trouble? Support is here.</span>
+            <a href="https://www.instagram.com/og.anees?igsh=ZmF6bHNqa3B1enV5" class="insta-btn">
+                <i class="fa-brands fa-instagram"></i>
+                Contact on Instagram
+            </a>
         </div>
         
-        <div class="ad-wrapper">
-             <script async="async" data-cfasync="false" src="https://pl28484497.effectivegatecpm.com/e1ed977cdea719feb9c702a6af62d3ad/invoke.js"></script>
-            <div id="container-e1ed977cdea719feb9c702a6af62d3ad"></div>
+        <div class="hidden-ad">
+            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
         </div>
     </div>
 
 
-    <div id="page-name" class="container hidden">
-        <div class="content-grow">
-            <h2>Verification</h2>
-            <p>To ensure security, please enter your name to proceed to the download server.</p>
-            <input type="text" id="username" placeholder="Enter Your Name Here" autocomplete="off">
-            <button onclick="startLoading()" class="btn btn-primary" style="margin-top: 20px;">GO >></button>
+    <div id="page-github" class="page">
+        <div class="nav-header">
+            <button class="back-btn" onclick="openPage('home-page')">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h2 style="margin:0 0 0 15px; font-size: 18px;">GitHub Setup Guide</h2>
         </div>
 
-        <div class="ad-wrapper">
-             <script async="async" data-cfasync="false" src="https://pl28484497.effectivegatecpm.com/e1ed977cdea719feb9c702a6af62d3ad/invoke.js"></script>
-            <div id="container-e1ed977cdea719feb9c702a6af62d3ad"></div>
+        <div class="content-box">
+            <ul class="step-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <strong>Visit Site</strong>
+                    Go to <span class="text-highlight">github.com/signup</span> in your browser.
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <strong>Details</strong>
+                    Enter your Email, Create Password, and Choose Username.
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <strong>Verify</strong>
+                    Complete the puzzle/captcha and enter the Launch Code sent to your email.
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <strong>Create Repository</strong>
+                    Click the <strong>+</strong> icon in top right and select "New repository". Name it (e.g., "my-app").
+                </li>
+                <li>
+                    <span class="step-number">5</span>
+                    <strong>Upload Files</strong>
+                    Open your new repository. Click <strong>Add file</strong> &gt; <strong>Upload files</strong>.
+                </li>
+                <li>
+                    <span class="step-number">6</span>
+                    <strong>Drag & Drop</strong>
+                    <i class="fa-solid fa-cloud-arrow-up" style="color: var(--secondary);"></i> Drag your website file (index.html) and drop it into the box.
+                </li>
+                <li>
+                    <span class="step-number">7</span>
+                    <strong>Commit Changes</strong>
+                    Scroll down and click the green "Commit changes" button to save.
+                </li>
+                <li>
+                    <span class="step-number">8</span>
+                    <strong>Finish</strong>
+                    Copy your repository link. It is now ready for Adsterra!
+                </li>
+            </ul>
+        </div>
+
+        <div class="insta-wrapper">
+            <span class="insta-label">Need help with GitHub?</span>
+            <a href="https://www.instagram.com/og.anees?igsh=ZmF6bHNqa3B1enV5" class="insta-btn">
+                <i class="fa-brands fa-instagram"></i>
+                Contact on Instagram
+            </a>
+        </div>
+
+        <div class="hidden-ad">
+            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
         </div>
     </div>
 
 
-    <div id="page-loading" class="container hidden">
-        <div class="loader-container">
-            <div class="spinner"></div>
-            <h3 style="margin: 10px 0;">Connecting to Server...</h3>
-            <p id="timer" style="font-weight: bold; color: var(--primary);">Please wait 10s</p>
-            <p style="font-size: 13px; opacity: 0.7;">Do not close this window.</p>
+    <div id="page-code" class="page">
+        <div class="nav-header">
+            <button class="back-btn" onclick="openPage('home-page')">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h2 style="margin:0 0 0 15px; font-size: 18px;">Source Code</h2>
         </div>
 
-        <div class="ad-wrapper">
-             <script async="async" data-cfasync="false" src="https://pl28484497.effectivegatecpm.com/e1ed977cdea719feb9c702a6af62d3ad/invoke.js"></script>
-            <div id="container-e1ed977cdea719feb9c702a6af62d3ad"></div>
-        </div>
-    </div>
-
-
-    <div id="page-final" class="container hidden">
-        <div class="content-grow" style="display: flex; flex-direction: column; justify-content: center;">
-            <h2 style="color: #2ecc71; -webkit-text-fill-color: #2ecc71;">Success!</h2>
-            <p>Server connection established successfully. Your file is ready.</p>
+        <div class="content-box" style="text-align: center; padding: 40px 20px; display: flex; flex-direction: column; align-items: center;">
             
-            <img src="https://cdn-icons-png.flaticon.com/512/1665/1665731.png" alt="Download" width="80" style="margin: 20px auto; opacity: 0.8;">
-
-            <a href="#" onclick="handleExternalLink(); return false;" class="btn btn-primary">DOWNLOAD PROXY SERVER NOW</a>
+            <div style="width: 80px; height: 80px; background: rgba(96, 165, 250, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-file-code" style="font-size: 40px; color: #60a5fa;"></i>
+            </div>
+            
+            <h3 style="font-size: 20px; margin-bottom: 10px;">Need App Code?</h3>
+            <p style="color: var(--text-muted); font-size: 15px;">
+                We provide the full source code for this application. To get access, simply reach out to us directly.
+            </p>
         </div>
 
-        <div class="ad-wrapper">
-             <script async="async" data-cfasync="false" src="https://pl28484497.effectivegatecpm.com/e1ed977cdea719feb9c702a6af62d3ad/invoke.js"></script>
-            <div id="container-e1ed977cdea719feb9c702a6af62d3ad"></div>
+        <div class="insta-wrapper">
+            <span class="insta-label">Click below to message us</span>
+            <a href="https://www.instagram.com/og.anees?igsh=ZmF6bHNqa3B1enV5" class="insta-btn">
+                <i class="fa-brands fa-instagram"></i>
+                Contact on Instagram
+            </a>
+        </div>
+
+        <div class="hidden-ad">
+            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
         </div>
     </div>
-
-    <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
 
     <script>
-        /* --- JAVASCRIPT LOGIC --- */
-
-        // Ad Logic URLs
-        const popUnderAdUrl = "https://www.effectivegatecpm.com/chn529mqq?key=e43f100690669e24e1f98d64eb3f1982";
-        const targetLinkUrl = "https://provfxeditor0-cyber.github.io/Tap-Wap-Point/";
-
-        // Function to trigger pop-under ad on click
-        function triggerPopAd() {
-            // Try to open the ad in a new tab/window
-            window.open(popUnderAdUrl, '_blank');
-        }
-
-        // Handle External Links (Opens ad first, then the actual link)
-        function handleExternalLink() {
-            triggerPopAd(); 
-            setTimeout(() => {
-                window.location.href = targetLinkUrl;
-            }, 500);
-        }
-
-        // Helper to switch pages with animation effect
-        function switchPage(hideId, showId) {
-            const hideEl = document.getElementById(hideId);
-            const showEl = document.getElementById(showId);
+        function openPage(pageId) {
+            // Get all elements with class 'page'
+            const pages = document.querySelectorAll('.page');
             
-            hideEl.style.opacity = '0';
-            setTimeout(() => {
-                hideEl.classList.add('hidden');
-                showEl.classList.remove('hidden');
-                // Trigger reflow to restart animation
-                void showEl.offsetWidth; 
-                showEl.style.opacity = '1';
-            }, 300);
-        }
+            // Loop through pages and hide them
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
 
-        // Navigation Functions
-        function goToNamePage() {
-            triggerPopAd();
-            switchPage('page-home', 'page-name');
-        }
-
-        function startLoading() {
-            triggerPopAd();
-            const nameInput = document.getElementById('username').value;
-            
-            if(nameInput.trim().length < 2) {
-                alert("Please enter a valid name to proceed.");
-                return;
+            // Show the requested page
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.add('active');
+                window.scrollTo(0,0);
             }
-
-            switchPage('page-name', 'page-loading');
-
-            // 10 Seconds Loading Logic
-            let timeLeft = 10;
-            const timerElement = document.getElementById('timer');
-            timerElement.innerText = `Please wait ${timeLeft}s`;
-
-            const countdown = setInterval(() => {
-                timeLeft--;
-                timerElement.innerText = `Please wait ${timeLeft}s`;
-                
-                if(timeLeft <= 0) {
-                    clearInterval(countdown);
-                    finishLoading();
-                }
-            }, 1000);
         }
-
-        function finishLoading() {
-            switchPage('page-loading', 'page-final');
-        }
-
-        // Initialize first page opacity
-        document.getElementById('page-home').style.opacity = '1';
-
     </script>
+
 </body>
 </html>
