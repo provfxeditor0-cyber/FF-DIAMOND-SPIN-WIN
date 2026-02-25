@@ -2,584 +2,574 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earn & Code Pro</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium Proxy Server</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #8b5cf6; /* Violet */
-            --secondary: #ec4899; /* Pink */
-            --bg-dark: #0f172a;
-            --card-glass: rgba(30, 41, 59, 0.7);
-            --border-glass: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --insta-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            --bg-dark: #050505;
+            --bg-accent: #0a0f1c;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff003c;
+            --neon-green: #00ff66;
+            --text-main: #e0e0e0;
+            --glass-bg: rgba(10, 15, 28, 0.7);
+            --glass-border: rgba(0, 243, 255, 0.2);
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-dark);
-            /* Deep modern background gradient */
-            background-image: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 20%),
-                              radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 20%);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 0, 60, 0.08), transparent 25%);
             color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            
+            /* DISABLE COPYING EVERYWHERE */
+            user-select: none; 
+            -webkit-user-select: none;
         }
 
-        /* --- Page Transitions --- */
+        /* Allow selection only on inputs and code */
+        input, .code-box {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        /* Mobile App Container */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(20px);
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+            border-left: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+        }
+
+        .app-container::-webkit-scrollbar { display: none; }
+        .app-container { -ms-overflow-style: none; scrollbar-width: none; }
+
         .page {
             display: none;
-            padding: 24px;
-            min-height: 100vh;
-            flex-direction: column;
-            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 30px 20px 50px 20px;
+            animation: glitchFadeIn 0.5s ease-out forwards;
         }
 
-        .page.active {
-            display: flex;
+        .page.active { display: block; }
+
+        @keyframes glitchFadeIn {
+            0% { opacity: 0; transform: scale(0.98) translateY(20px); filter: blur(5px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        /* --- Headers --- */
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
+        .header-box {
             text-align: center;
             margin-bottom: 30px;
-            margin-top: 10px;
-            background: linear-gradient(to right, #fff, #cbd5e1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(0, 243, 255, 0.1) 0%, transparent 100%);
+            border-top: 2px solid var(--neon-cyan);
+            border-radius: 10px;
+            box-shadow: 0 -10px 20px rgba(0, 243, 255, 0.1);
         }
 
-        h2 {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 20px;
+        h1 {
+            font-size: 26px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+            line-height: 1.4;
         }
 
-        /* --- Menu Grid (Home) --- */
-        .menu-grid {
-            display: grid;
-            gap: 16px;
-            margin-top: 10px;
+        h1 span {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+            font-size: 20px;
         }
 
-        .menu-card {
-            background: var(--card-glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 24px;
-            border-radius: 20px;
-            border: 1px solid var(--border-glass);
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        /* Cyberpunk Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: #fff;
             cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            margin: 20px 0;
         }
 
-        .menu-card:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        .btn-cyan {
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3) inset, 0 0 15px rgba(0, 243, 255, 0.3);
         }
 
-        .menu-card:active {
-            transform: scale(0.98);
+        .btn-cyan::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), transparent);
+            transition: 0.5s;
+            z-index: -1;
         }
 
-        .icon-box {
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+        .btn-cyan:hover::before, .btn-cyan:active::before { left: 100%; }
+        .btn-cyan:active { transform: scale(0.95); box-shadow: 0 0 30px var(--neon-cyan) inset; }
+
+        .coin-banner {
+            background: linear-gradient(90deg, #ffd700, #ff8c00);
+            color: #000;
+            border: none;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            animation: goldPulse 2s infinite;
+            font-weight: 900;
         }
 
-        /* Specific colors for icons */
-        .card-ad .icon-box { color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); }
-        .card-git .icon-box { color: #f8fafc; box-shadow: 0 0 15px rgba(248, 250, 252, 0.2); }
-        .card-code .icon-box { color: #60a5fa; box-shadow: 0 0 15px rgba(96, 165, 250, 0.2); }
-        
-        /* New Gold Card Style */
-        .card-gold .icon-box { color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
-        .card-gold { border-color: rgba(251, 191, 36, 0.3); }
+        @keyframes goldPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
 
-        .card-text {
-            font-size: 16px;
+        /* Glassmorphism Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .info-card h3 {
+            font-size: 11px;
+            color: var(--neon-pink);
+            margin-bottom: 8px;
+        }
+
+        .info-card p {
             font-weight: 600;
-            letter-spacing: 0.5px;
-            flex: 1; /* Allows text to take available space */
-        }
-
-        .chevron {
-            opacity: 0.5;
             font-size: 14px;
+            color: #fff;
         }
 
-        /* --- Back Button --- */
-        .nav-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .back-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-glass);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .back-btn:active {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* --- Content Styling --- */
-        .content-box {
-            background: var(--card-glass);
-            padding: 24px;
-            border-radius: 20px;
-            border: 1px solid var(--border-glass);
-            margin-bottom: 24px;
-        }
-
-        .text-highlight {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* --- Timeline Steps --- */
-        .step-list {
-            list-style: none;
-            padding-left: 10px;
-        }
-
-        .step-list li {
+        /* Tech Text Sections */
+        .text-section {
+            background: rgba(10, 15, 28, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 3px solid var(--neon-cyan);
+            margin-bottom: 20px;
             position: relative;
-            padding-left: 45px;
-            margin-bottom: 25px;
+        }
+
+        .text-section::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 10px; height: 10px;
+            border-top: 1px solid var(--neon-cyan);
+            border-right: 1px solid var(--neon-cyan);
+        }
+
+        .text-section h3 {
+            color: var(--neon-cyan);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .text-section p {
             color: var(--text-muted);
             font-size: 14px;
             line-height: 1.6;
+            text-align: justify;
         }
 
-        .step-list li:last-child {
-            margin-bottom: 0;
+        /* Futuristic Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
         }
 
-        /* The Line */
-        .step-list li::before {
-            content: '';
-            position: absolute;
-            left: 14px;
-            top: 24px;
-            bottom: -28px;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.1);
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: var(--neon-cyan);
+            letter-spacing: 1.5px;
         }
 
-        .step-list li:last-child::before {
-            display: none;
+        .form-group input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--neon-cyan);
+            font-size: 16px;
+            font-family: 'Exo 2', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,1);
         }
 
-        /* The Number Bubble */
-        .step-list li::after {
-            counter-increment: my-counter; 
+        .form-group input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
         }
-        
-        /* Custom number rendering */
-        .step-number {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border-radius: 50%;
+
+        .form-group input::placeholder {
+            color: #555;
+        }
+
+        /* Hacker Loader */
+        .loader-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4);
-            z-index: 2;
+            height: 60vh;
         }
 
-        .step-list strong {
-            color: white;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        /* --- Links & Banners --- */
-        .ad-banner {
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-        }
-        
-        .ad-banner img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            transition: transform 0.2s;
-        }
-        
-        .ad-banner img:hover {
-            transform: scale(1.02);
-        }
-
-        /* --- Glowing Instagram Button --- */
-        .insta-wrapper {
-            margin-top: auto;
-            padding-top: 20px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .insta-label {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .insta-btn {
+        .tech-ring {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--neon-cyan);
+            border-bottom-color: var(--neon-pink);
+            animation: spin 2s linear infinite;
             position: relative;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+        }
+
+        .tech-ring::before {
+            content: '';
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-left-color: var(--neon-pink);
+            border-right-color: var(--neon-cyan);
+            animation: spin 1.5s linear infinite reverse;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .timer {
+            position: absolute;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-cyan);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Terminal Code Box */
+        .code-box {
+            background: #020202;
+            padding: 25px 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            letter-spacing: 4px;
+            word-break: break-all;
+            margin: 30px 0;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2), inset 0 0 20px rgba(0, 255, 102, 0.1);
+            position: relative;
+        }
+
+        .code-box::before {
+            content: 'DECRYPTED KEY';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #020202;
+            padding: 0 10px;
+            font-size: 12px;
+            color: var(--neon-green);
+        }
+
+        /* Instagram Gradient Button */
+        .insta-btn {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 14px;
-            border-radius: 50px;
-            background: var(--insta-grad);
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
+            text-transform: none;
+            font-family: 'Exo 2', sans-serif;
             font-size: 16px;
-            overflow: hidden;
-            transition: transform 0.2s;
-            animation: pulse-glow 3s infinite;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(220, 39, 67, 0.4);
         }
 
-        .insta-btn i {
-            font-size: 24px;
-        }
-
-        /* Shine effect */
-        .insta-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
-        }
-
-        .insta-btn:hover::before {
-            left: 100%;
-        }
-
-        .insta-btn:active {
-            transform: scale(0.96);
-        }
-
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(220, 39, 67, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(220, 39, 67, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(220, 39, 67, 0); }
-        }
-
-        /* --- Ad Script Container --- */
-        .hidden-ad {
-            opacity: 0;
-            pointer-events: none;
-            height: 0;
-            overflow: hidden;
-        }
+        .insta-btn svg { width: 24px; height: 24px; fill: white; }
     </style>
 </head>
 <body>
 
-    <div id="home-page" class="page active">
-        <h1><i class="fa-solid fa-shapes"></i> Dashboard</h1>
-        
-        <p style="text-align: center; margin-bottom: 30px; font-size: 14px;">Select an option to start earning</p>
+<div class="app-container">
 
-        <div class="menu-grid">
-            <div class="menu-card card-ad" onclick="openPage('page-ad')">
-                <div class="icon-box">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                </div>
-                <div class="card-text">How to Make Ad Account</div>
-                <i class="fa-solid fa-chevron-right chevron"></i>
-            </div>
-
-            <div class="menu-card card-git" onclick="openPage('page-github')">
-                <div class="icon-box">
-                    <i class="fa-brands fa-github"></i>
-                </div>
-                <div class="card-text">How to Make GitHub</div>
-                <i class="fa-solid fa-chevron-right chevron"></i>
-            </div>
-
-            <div class="menu-card card-code" onclick="openPage('page-code')">
-                <div class="icon-box">
-                    <i class="fa-solid fa-code"></i>
-                </div>
-                <div class="card-text">Get Apps Code</div>
-                <i class="fa-solid fa-chevron-right chevron"></i>
-            </div>
-            
-            <div class="menu-card card-gold" onclick="window.open('https://provfxeditor0-cyber.github.io/Tap-Wap-Point/', '_blank')">
-                <div class="icon-box">
-                    <i class="fa-solid fa-crown"></i>
-                </div>
-                <div class="card-text">Earn Upto 5000 Daily click here</div>
-                <i class="fa-solid fa-up-right-from-square chevron"></i>
-            </div>
-
-        </div>
-
-        <div class="hidden-ad">
-            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
-        </div>
-    </div>
-
-
-    <div id="page-ad" class="page">
-        <div class="nav-header">
-            <button class="back-btn" onclick="openPage('home-page')">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <h2 style="margin:0 0 0 15px; font-size: 18px;">Create Adsterra Account</h2>
-        </div>
-
-        <div class="content-box">
-            <div class="ad-banner">
-                <a href="https://beta.publishers.adsterra.com/referral/n3CbkGGGdd" rel="nofollow">
-                    <img alt="banner" src="https://landings-cdn.adsterratech.com/referralBanners/png/80%20x%2030%20px.png" />
-                </a>
-                <div style="margin-top: 10px;">
-                    <a href="https://beta.publishers.adsterra.com/referral/n3CbkGGGdd" style="color:#4ade80; text-decoration: none; font-weight: 600;">
-                        <i class="fa-solid fa-link"></i> Click here to Sign Up
-                    </a>
-                </div>
-            </div>
-
-            <ul class="step-list">
-                <li>
-                    <span class="step-number">1</span>
-                    <strong>Register</strong>
-                    Make a new publisher account with your email.
-                </li>
-                <li>
-                    <span class="step-number">2</span>
-                    <strong>New Website</strong>
-                    After making the publisher account, click on the "New Website" option in the sidebar.
-                </li>
-                <li>
-                    <span class="step-number">3</span>
-                    <strong>Add GitHub</strong>
-                    Paste your GitHub link that you have made.
-                </li>
-                <li>
-                    <span class="step-number">4</span>
-                    <strong>Select Ads</strong>
-                    Choose <strong>Popunder</strong> ads (This is best for you).
-                </li>
-                <li>
-                    <span class="step-number">5</span>
-                    <strong>Get Code</strong>
-                    Click "Add". You will get a code in your mail/dashboard in 2-3 minutes.
-                </li>
-                <li>
-                    <span class="step-number">6</span>
-                    <strong>Implement</strong>
-                    After getting the code, paste it into your app code.
-                </li>
-                <li>
-                    <span class="step-number">7</span>
-                    <strong>Publish & Earn</strong>
-                    Publish the app, share with your friends and start earning money!
-                </li>
-            </ul>
-        </div>
-
-        <div class="insta-wrapper">
-            <span class="insta-label">Having trouble? Support is here.</span>
-            <a href="https://www.instagram.com/og.anees?igsh=ZmF6bHNqa3B1enV5" class="insta-btn">
-                <i class="fa-brands fa-instagram"></i>
-                Contact on Instagram
-            </a>
+    <div id="page1" class="page active">
+        <div class="header-box">
+            <h1>PROXY SERVER<br><span>DOWNLOAD FREE</span></h1>
         </div>
         
-        <div class="hidden-ad">
-            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
+        <button class="btn btn-cyan" onclick="showPage('page2')">INITIALIZE DOWNLOAD</button>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>TARGET APP</h3>
+                <p>Proxy FF</p>
+            </div>
+            <div class="info-card">
+                <h3>BUILD VER</h3>
+                <p>2.121.1</p>
+            </div>
+            <div class="info-card">
+                <h3>SYS REQ</h3>
+                <p>Android 5.0+</p>
+            </div>
+            <div class="info-card">
+                <h3>PACK SIZE</h3>
+                <p>453.15 MB</p>
+            </div>
+        </div>
+
+        <div class="text-section">
+            <h3>SYSTEM OVERVIEW</h3>
+            <p>Proxy Server Free Fire is an application designed to enhance the connection method. It utilizes different elements to improve the game connection via different pathways and tunnels the traffic of the game. Players can download and use this app for free, and it is completely safe.</p>
+            <p>The Free Fire game uses multiple regional servers to provide a better gaming experience. So, due to these regional servers, players get a smooth and seamless gaming experience. However, sometimes the game lags and players cannot enjoy it the way they want to. It happens because some of the regional servers don't work properly, or players connect with unsupported regions.</p>
+            <p>Therefore, we are here with this application, which players can install and tunnel the game traffic through their desired server. This app is designed to reduce ping level in the game and gives players a seamless gaming experience, without any kind of safety issues to their Game IDs.</p>
+        </div>
+
+        <div class="text-section">
+            <h3>SERVER SELECTION</h3>
+            <p>The best part of the app is that users can have a huge variety of servers in the app. So, they can connect to any server that is fast and nearest to their region. There are different geographical regions that you can have on the map, such as Singapore, Europe, India, etc.</p>
+        </div>
+
+        <div class="text-section">
+            <h3>IP MASKING PROTOCOL</h3>
+            <p>Another best feature of the app is that it hides your actual location or IP address. So, it shows or displays the IP that you have chosen in the app. This way, you cannot only keep your account safe, but also connect with the server that is near your region or country.</p>
+        </div>
+
+        <div class="text-section">
+            <h3>PING OPTIMIZATION</h3>
+            <p>The purpose of this app is to allow users to reduce the latency. Players are supposed to find the efficient connection pathways or Server IPs in the app. You can find the status of every IP available in the app.</p>
         </div>
     </div>
 
-
-    <div id="page-github" class="page">
-        <div class="nav-header">
-            <button class="back-btn" onclick="openPage('home-page')">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <h2 style="margin:0 0 0 15px; font-size: 18px;">GitHub Setup Guide</h2>
+    <div id="page2" class="page">
+        <div class="header-box" style="margin-bottom: 40px;">
+            <h2 style="color: var(--neon-cyan);">USER DATABANK</h2>
+            <p style="color: #888; font-size: 14px; margin-top: 5px;">Enter credentials to proceed</p>
         </div>
-
-        <div class="content-box">
-            <ul class="step-list">
-                <li>
-                    <span class="step-number">1</span>
-                    <strong>Visit Site</strong>
-                    Go to <span class="text-highlight">github.com/signup</span> in your browser.
-                </li>
-                <li>
-                    <span class="step-number">2</span>
-                    <strong>Details</strong>
-                    Enter your Email, Create Password, and Choose Username.
-                </li>
-                <li>
-                    <span class="step-number">3</span>
-                    <strong>Verify</strong>
-                    Complete the puzzle/captcha and enter the Launch Code sent to your email.
-                </li>
-                <li>
-                    <span class="step-number">4</span>
-                    <strong>Create Repository</strong>
-                    Click the <strong>+</strong> icon in top right and select "New repository". Name it (e.g., "my-app").
-                </li>
-                <li>
-                    <span class="step-number">5</span>
-                    <strong>Upload Files</strong>
-                    Open your new repository. Click <strong>Add file</strong> &gt; <strong>Upload files</strong>.
-                </li>
-                <li>
-                    <span class="step-number">6</span>
-                    <strong>Drag & Drop</strong>
-                    <i class="fa-solid fa-cloud-arrow-up" style="color: var(--secondary);"></i> Drag your website file (index.html) and drop it into the box.
-                </li>
-                <li>
-                    <span class="step-number">7</span>
-                    <strong>Commit Changes</strong>
-                    Scroll down and click the green "Commit changes" button to save.
-                </li>
-                <li>
-                    <span class="step-number">8</span>
-                    <strong>Finish</strong>
-                    Copy your repository link. It is now ready for Adsterra!
-                </li>
-            </ul>
+        
+        <div class="form-group">
+            <label>PLAYER ALIAS (NAME)</label>
+            <input type="text" id="userName" placeholder="Enter username" autocomplete="off">
         </div>
-
-        <div class="insta-wrapper">
-            <span class="insta-label">Need help with GitHub?</span>
-            <a href="https://www.instagram.com/og.anees?igsh=ZmF6bHNqa3B1enV5" class="insta-btn">
-                <i class="fa-brands fa-instagram"></i>
-                Contact on Instagram
-            </a>
+        <div class="form-group">
+            <label>REGION (COUNTRY)</label>
+            <input type="text" id="userCountry" placeholder="Enter country" autocomplete="off">
         </div>
-
-        <div class="hidden-ad">
-            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
+        <div class="form-group">
+            <label>AGE VERIFICATION</label>
+            <input type="number" id="userAge" placeholder="Enter age">
         </div>
+        
+        <button class="btn btn-cyan" style="margin-top: 40px;" onclick="startLoading()">ESTABLISH CONNECTION</button>
+        
+        <a href="https://provfxeditor0-cyber.github.io/Tap-Wap-Point/" target="_blank" class="btn coin-banner" style="margin-top: 30px;">
+            EARN UPTO 5K COINS IN A DAY CLICK HERE
+        </a>
     </div>
 
-
-    <div id="page-code" class="page">
-        <div class="nav-header">
-            <button class="back-btn" onclick="openPage('home-page')">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <h2 style="margin:0 0 0 15px; font-size: 18px;">Source Code</h2>
-        </div>
-
-        <div class="content-box" style="text-align: center; padding: 40px 20px; display: flex; flex-direction: column; align-items: center;">
+    <div id="page3" class="page">
+        <div class="loader-container">
+            <h2 id="loadingText" style="margin-bottom: 50px; color: var(--neon-cyan); letter-spacing: 4px; font-size: 20px;">BYPASSING SECURITY...</h2>
             
-            <div style="width: 80px; height: 80px; background: rgba(96, 165, 250, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                <i class="fa-solid fa-file-code" style="font-size: 40px; color: #60a5fa;"></i>
+            <div style="position: relative;">
+                <div id="loaderCircles" class="tech-ring"></div>
+                <div id="timerDisplay" class="timer">10s</div>
             </div>
             
-            <h3 style="font-size: 20px; margin-bottom: 10px;">Need App Code?</h3>
-            <p style="color: var(--text-muted); font-size: 15px;">
-                We provide the full source code for this application. To get access, simply reach out to us directly.
-            </p>
-        </div>
-
-        <div class="insta-wrapper">
-            <span class="insta-label">Click below to message us</span>
-            <a href="https://www.instagram.com/og.anees?igsh=ZmF6bHNqa3B1enV5" class="insta-btn">
-                <i class="fa-brands fa-instagram"></i>
-                Contact on Instagram
-            </a>
-        </div>
-
-        <div class="hidden-ad">
-            <script src="https://pl28429274.effectivegatecpm.com/a0/34/21/a0342166e2530539295a4706d13f5639.js"></script>
+            <button id="getCodeBtn" class="btn btn-cyan" style="display: none; margin-top: 60px;" onclick="showPage('page4')">EXTRACT CODE</button>
         </div>
     </div>
 
-    <script>
-        function openPage(pageId) {
-            // Get all elements with class 'page'
-            const pages = document.querySelectorAll('.page');
-            
-            // Loop through pages and hide them
-            pages.forEach(page => {
-                page.classList.remove('active');
-            });
+    <div id="page4" class="page">
+        <div class="header-box">
+            <h2 style="color: var(--neon-green);">ACCESS GRANTED</h2>
+            <p style="color: #888; font-size: 14px; margin-top: 5px;">Secure channel established</p>
+        </div>
+        
+        <div class="code-box" id="generatedCode">GENERATING...</div>
+        
+        <button class="btn btn-cyan" id="copyBtn" onclick="copyCode()">COPY TO CLIPBOARD</button>
+        
+        <a href="https://www.instagram.com/og.anees?igsh=ZmF6bHNqa3B1enV5" target="_blank" class="btn insta-btn" style="margin-top: 40px;">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            Contact us on Insta to get the proxy server
+        </a>
 
-            // Show the requested page
-            const activePage = document.getElementById(pageId);
-            if (activePage) {
-                activePage.classList.add('active');
-                window.scrollTo(0,0);
-            }
+        <a href="https://provfxeditor0-cyber.github.io/Tap-Wap-Point/" target="_blank" class="btn coin-banner" style="margin-top: 20px;">
+            EARN UPTO 5K COINS IN A DAY CLICK HERE
+        </a>
+    </div>
+
+</div>
+
+<script>
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+        document.getElementById(pageId).classList.add('active');
+        
+        if(pageId === 'page4') {
+            generateRandomCode();
+            const btn = document.getElementById('copyBtn');
+            btn.innerText = "COPY TO CLIPBOARD";
+            btn.style.borderColor = "var(--neon-cyan)";
+            btn.style.boxShadow = "0 0 15px rgba(0, 243, 255, 0.3) inset, 0 0 15px rgba(0, 243, 255, 0.3)";
         }
-    </script>
+    }
+
+    function startLoading() {
+        const name = document.getElementById('userName').value.trim();
+        const country = document.getElementById('userCountry').value.trim();
+        const age = document.getElementById('userAge').value.trim();
+
+        if(name === '' || country === '' || age === '') {
+            alert("⚠️ SYSTEM ERROR: Missing Credentials. Fill all fields.");
+            return;
+        }
+
+        showPage('page3');
+        
+        let timeLeft = 10;
+        const timerDisplay = document.getElementById('timerDisplay');
+        const getCodeBtn = document.getElementById('getCodeBtn');
+        const loaderCircles = document.getElementById('loaderCircles');
+        const loadingText = document.getElementById('loadingText');
+
+        timerDisplay.style.display = 'block';
+        loaderCircles.style.display = 'block';
+        getCodeBtn.style.display = 'none';
+        loadingText.innerText = "BYPASSING SECURITY...";
+        loadingText.style.color = "var(--neon-cyan)";
+        timerDisplay.innerText = timeLeft + "s";
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = timeLeft + "s";
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerDisplay.style.display = 'none';
+                loaderCircles.style.display = 'none';
+                loadingText.innerText = "DECRYPTION COMPLETE";
+                loadingText.style.color = "var(--neon-green)";
+                getCodeBtn.style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    function generateRandomCode() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
+        for (let i = 0; i < 25; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        document.getElementById('generatedCode').innerText = result;
+    }
+
+    function copyCode() {
+        const codeText = document.getElementById('generatedCode').innerText;
+        const btn = document.getElementById('copyBtn');
+
+        const copySuccess = () => {
+            btn.innerText = "DATA COPIED ✓";
+            btn.style.borderColor = "var(--neon-green)";
+            btn.style.boxShadow = "0 0 20px rgba(0, 255, 102, 0.4) inset, 0 0 20px rgba(0, 255, 102, 0.4)";
+            setTimeout(() => {
+                btn.innerText = "COPY TO CLIPBOARD";
+                btn.style.borderColor = "var(--neon-cyan)";
+                btn.style.boxShadow = "0 0 15px rgba(0, 243, 255, 0.3) inset, 0 0 15px rgba(0, 243, 255, 0.3)";
+            }, 3000);
+        };
+
+        const textArea = document.createElement("textarea");
+        textArea.value = codeText;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            const successful = document.execCommand('copy');
+            if(successful) copySuccess();
+            else alert("Manual copy required.");
+        } catch (err) {
+            alert("Manual copy required.");
+        }
+        
+        document.body.removeChild(textArea);
+    }
+</script>
 
 </body>
 </html>
